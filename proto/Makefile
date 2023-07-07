@@ -10,3 +10,6 @@ test: proto.o
 
 proto.o: proto.c
 	$(CC) $(CFLAGS) -o $@ -c $^
+
+clean:
+	$(RM) proto.o proto
