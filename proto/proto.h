@@ -4,17 +4,16 @@
 #include <err.h>
 
 struct protoframe {
-    char sof;
-    char fn_id;
-    char id[2];
-    char size[2];
-    char* payload;
+    uint8_t fn_id;
+    uint16_t id;
+    uint16_t size;
+    uint8_t* payload;
+    uint32_t checksum;
 };
 
 // Fn must check the checksum which is 4 bytes after the payload
-struct protoframe decoder(char* buffer);
+struct protoframe decoder(uint8_t* buffer);
 
-char* encoder(char fn_id, char id[2], int size,char payload);
-
+char* encoder(uint8_t fn_id, uint16_t id, uint16_t size,uint8_t* payload);
 
 #endif
