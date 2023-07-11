@@ -6,13 +6,22 @@
 
 #define MAX_PAYLOAD_SIZE 4096
 
-struct protoframe {
-    uint8_t function_name;
-    uint16_t id;
-    uint16_t size;
-    uint8_t payload[MAX_PAYLOAD_SIZE];
-};
+typedef union {
+    uint32_t raw;
+    struct {
+        uint8_t id;
+        uint8_t payload[3];
+    } content;
+} function;
 
+struct protoframe {
+    function SetColorRGB;
+    function SetColorHSV;
+    // TODO: ...
+    uint8_t FocusOn;
+    // TODO: ...
+    uint8_t discovery[];
+} __attribute__((__packed__)); // evite le padding
 
 // Fn must check the checksum which is 4 bytes after the payload
 void decoder(uint8_t bufferbyte);
