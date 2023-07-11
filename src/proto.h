@@ -30,9 +30,22 @@ struct protoframe_v2 {
 
 // ######################################################
 
+
+typedef enum {
+    SETCOLORRGB,
+    SETCOLORHSV,
+    GETCOLORRGB,
+    FOCUSON,
+    FOCUSOFF,
+    ACK,
+    DISCOVERY,
+    HEARTBEAT,
+    UNREACHABLE
+} function_name_t;
+
 // Frame structure
 struct protoframe {
-    uint8_t function_name;
+    function_name_t function_name;
     uint16_t id;
     uint16_t size;
     uint8_t payload[MAX_PAYLOAD_SIZE];

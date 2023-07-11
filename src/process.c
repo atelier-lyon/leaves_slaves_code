@@ -20,7 +20,7 @@ void FocusOff(void){
     printf("FocusOff\n");
 }
 
-void ACK(void){
+void Ack(void){
     printf("ACK\n");
 }
 
@@ -32,31 +32,38 @@ void Heartbeat(void){
     printf("Heartbeat\n");
 }
 
+void Unreachable(void){
+    printf("Unreachable\n");
+}
+
 void process_decoded_data(struct protoframe frame){
     switch(frame.function_name){
-        case 0x01:
+        case SETCOLORRGB:
             SetColorRGB();
             break;
-        case 0x02:
+        case SETCOLORHSV:
             SetColorHSV();
             break;
-        case 0x03:
+        case GETCOLORRGB:
             GetColorRGB();
             break;
-        case 0x11:
+        case FOCUSON:
             FocusOn();
             break;
-        case 0x10:
+        case FOCUSOFF:
             FocusOff();
             break;
-        case 0xf0:
-            ACK();
+        case ACK:
+            Ack();
             break;
-        case 0xff:
+        case DISCOVERY:
             Discovery();
             break;
-        case 0x0f:
+        case HEARTBEAT:
             Heartbeat();
+            break;
+        case UNREACHABLE:
+            Unreachable();
             break;
         default:
             break;
