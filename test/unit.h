@@ -2,8 +2,9 @@
 #define UNIT_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "CUnit/Basic.h"
 
-#include "../../proto/proto.h"
+#include "../src/proto.h"
 #endif
