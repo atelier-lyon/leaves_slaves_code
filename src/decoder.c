@@ -31,7 +31,7 @@ uint32_t compute_checksum(const uint8_t* data, size_t size) {
         sum += data[i];
     }
     
-    return sum;
+    return sum % 0x100000000; // cutting the excedent bits
 }
 
 void decoder(uint8_t bufferbyte){
@@ -64,6 +64,9 @@ void decoder(uint8_t bufferbyte){
             if(frame.size > MAX_PAYLOAD_SIZE){
                 state = S_CHECKSUM;
                 break;
+            }else if (frame.size == 0) {
+                state = S_CHECKSUM;
+                break;
             }
             state = S_PAYLOAD;
             break;
@@ -84,10 +87,10 @@ void decoder(uint8_t bufferbyte){
             // if the checksum is incorrect, the process function will not be called
             // but the valuues will still be there for test purposes
             if(checksum_counter == 4){
-                if(checksum == compute_checksum((uint8_t*)&frame, sizeof(frame) - 4)) process_decoded_data(frame);
+                if(checksum == compute_checksum((uint8_t*)&frame, sizeof(frame) - 4)) process_decoded_data(frame, frame.payload);
             }else {
                 // for test purposes to see if the checksum is correctly tested
-                frame.function_name = 0xff;
+                frame.function_name = 0x42;
             }
             // resetting every parameter to be able to read another frame
             state = S_WAITING_SOF;

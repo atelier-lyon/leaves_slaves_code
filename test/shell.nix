@@ -3,8 +3,15 @@
 with import nixpkgs { inherit system; };
 
 stdenv.mkDerivation {
-  name = "unit_test";
+  name = "criterion-test-env";
   buildInputs = [ 
-    cunit	
+    gnustep.base
+    criterion
+    pkg-config
+    cmake
+    meson
+    ninja
+    libffi
+    libgit2
   ];
 }

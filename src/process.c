@@ -1,10 +1,11 @@
 #include "process.h"
+#include <stdint.h>
 
-void SetColorRGB(void){
+void SetColorRGB(uint8_t r, uint8_t g, uint8_t b){
     printf("SetColorRGB\n");
 }
 
-void SetColorHSV(void){
+void SetColorHSV(uint8_t h, uint8_t s, uint8_t v){
     printf("SetColorHSV\n");
 }
 
@@ -36,13 +37,17 @@ void Unreachable(void){
     printf("Unreachable\n");
 }
 
-void process_decoded_data(struct protoframe frame){
+void syntaxError(void){
+    printf("SyntaxError\n");
+}
+
+void process_decoded_data(struct protoframe frame, uint8_t* args){
     switch(frame.function_name){
         case SETCOLORRGB:
-            SetColorRGB();
+            SetColorRGB(args[0], args[1], args[2]);
             break;
         case SETCOLORHSV:
-            SetColorHSV();
+            SetColorHSV(args[0], args[1], args[2]);
             break;
         case GETCOLORRGB:
             GetColorRGB();
@@ -64,6 +69,9 @@ void process_decoded_data(struct protoframe frame){
             break;
         case UNREACHABLE:
             Unreachable();
+            break;
+        case ERRORSYNTAX:
+            syntaxError();
             break;
         default:
             break;

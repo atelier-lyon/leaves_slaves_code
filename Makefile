@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic -fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic -fsanitize=address -lcriterion -g
 
 BUILD_DIR = ./build
 LIB_DIR = $(BUILD_DIR)/lib
