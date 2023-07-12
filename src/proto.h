@@ -32,15 +32,16 @@ struct protoframe_v2 {
 
 
 typedef enum {
-    SETCOLORRGB,
-    SETCOLORHSV,
-    GETCOLORRGB,
-    FOCUSON,
-    FOCUSOFF,
-    ACK,
-    DISCOVERY,
-    HEARTBEAT,
-    UNREACHABLE
+    SETCOLORRGB = 0x01,
+    SETCOLORHSV = 0x02,
+    GETCOLORRGB = 0x03,
+    FOCUSON = 0x11,
+    FOCUSOFF = 0x10,
+    ACK = 0x0A,
+    DISCOVERY = 0xAA,
+    HEARTBEAT = 0x64,
+    UNREACHABLE = 0xFF,
+    ERRORSYNTAX = 0xEE
 } function_name_t;
 
 // Frame structure
@@ -60,6 +61,6 @@ extern struct protoframe frame;
 void decoder(uint8_t bufferbyte);
 
 //TODO
-char* encoder(uint8_t fn_id, uint16_t id, uint16_t size,uint8_t* payload);
+char* encoder(function_name_t fn_id, uint16_t id, uint16_t size, uint8_t* payload, uint8_t pin);
 
 #endif
