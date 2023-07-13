@@ -5,7 +5,7 @@ BUILD_DIR = ./build
 LIB_DIR = $(BUILD_DIR)/lib
 LIB_NAME = libproto.a
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic -fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror -Wno-unused -std=c99 -pedantic -fsanitize=address -g
 
 TARGET_EXEC := nanoleaf
 
