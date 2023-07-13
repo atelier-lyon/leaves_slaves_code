@@ -85,7 +85,7 @@ void decoder(uint8_t bufferbyte){
             checksum = checksum << 8 | bufferbyte;
             checksum_counter++;
             // if the checksum is incorrect, the process function will not be called
-            // but the valuues will still be there for test purposes
+            // but the values will still be there for test purposes
             if(checksum_counter == 4){
                 if(checksum == compute_checksum((uint8_t*)&frame, sizeof(frame) - 4)) process_decoded_data(frame, frame.payload);
             }else {

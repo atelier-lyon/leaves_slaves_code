@@ -60,6 +60,8 @@ extern struct protoframe frame;
 // Fn must check the checksum which is 4 bytes after the payload
 void decoder(uint8_t bufferbyte);
 
+uint32_t compute_checksum(const uint8_t* data, size_t size);
+
 //TODO
 char* encoder(function_name_t fn_id, uint16_t id, uint16_t size, uint8_t* payload, uint8_t pin);
 
