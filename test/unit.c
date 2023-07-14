@@ -36,6 +36,6 @@ Test(basicEncoding, basicTrame)
     uint8_t frame_expected[] = {0x69, 0x01, 0x00, 0x01, 0x00, 0x03};
     uint32_t expected = compute_checksum(frame_expected, sizeof(frame_expected) - 4);
     uint8_t* payload = {0x00};
-    uint8_t* res = encoder(trame, 0x01, 0x00, 0x01, payload, 0x03)
-    cr_assert_eq(res, expected);
+    uint8_t* res = encoder(trame, 0x01, 0x00, 0x01, payload, 0x03);
+    cr_assert_eq(res, frame_expected);
 }
