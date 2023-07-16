@@ -1,16 +1,36 @@
 #include "unit.h"
-#include "criterion/assert.h"
 
+void print_protoframe(struct protoframe frame) {
+    printf("Function Name: %02X\n", frame.function_name);
+    printf("ID: %u\n", frame.id);
+    printf("Size: %u\n", frame.size);
+    printf("Payload: ");
+    for (int i = 0; i < frame.size; i++) {
+        printf("%02X ", frame.payload[i]);
+    }
+    printf("\n");
+    printf("Checksum: %u\n", frame.checksum);
+}
 
 Test(goodInput, decodeAck)
 {
     // ACK frame
-    //             SOF    FN    ID    ID    LEN   Checksum
-    char data[9] = {0x69, 0x06, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x70};
-    for (int i = 0; i < 9; i++)
+    //                  SOF   FN    ID    ID    LEN         Checksum
+    uint8_t data[10] = {0x69, 0x0A, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    // setup checksum
+    uint32_t checkss = compute_checksum(data, 5);
+    for (int i = 0; i < 4; i++)
+    {
+        data[6 + i] = (checkss >> (8 * (3 - i))) & 0xFF;
+    }
+
+    for (int i = 0; i < 10; i++)
     {
         decoder(data[i]);
     }
+
+    // TEST:
+    print_protoframe(frame);
     cr_assert_eq(frame.function_name, ACK);
     cr_assert_eq(frame.id, 1);
     cr_assert_eq(frame.size, 0);
@@ -19,12 +39,20 @@ Test(goodInput, decodeAck)
 Test(badInput, decodeBadChecksumAck)
 {
     // ACK frame
-    //             SOF    FN    ID    ID    LEN   Checksum
-    char data[9] = {0x69, 0x15, 0x00, 0x01, 0x00, 0x00, 0x00, 0x14, 0x70};
-    for (int i = 0; i < 9; i++)
+    //                  SOF   FN    ID    ID    LEN         Checksum
+    uint8_t data[10] = {0x69, 0x0A, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    // setup checksum
+    uint32_t checkss = compute_checksum(data, 5) + 1;
+    for (int i = 0; i < 4; i++)
+    {
+        data[6 + i] = (checkss >> (8 * (3 - i))) & 0xFF;
+    }
+    for (int i = 0; i < 10; i++)
     {
         decoder(data[i]);
     }
+    // TEST:
+    print_protoframe(frame);
     cr_assert_eq(frame.function_name, 0x42);
     cr_assert_eq(frame.id, 1);
     cr_assert_eq(frame.size, 0);
