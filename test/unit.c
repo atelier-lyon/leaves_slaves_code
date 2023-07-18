@@ -126,17 +126,48 @@ Test(goodInput, basicTrame)
         frame_expected[7 + i] = (expected >> (8 * (3 - i))) & 0xFF;
     uint8_t payload[1] = {0x01};
     uint8_t *res = encoder(trame, 0x01, 0x01, 0x01, payload, 0x03);
+    for (int i = 0; i < 11; i++) {
+        cr_assert_eq(res[i], frame_expected[i]);
+    }
+}
+
+Test(goodInput, noPayload)
+{
+    uint8_t trame[10];
+    uint8_t frame_expected[] = {0x69, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint32_t expected = compute_checksum(frame_expected, sizeof(frame_expected) - 4);
+    for (int i = 0; i < 4; i++)
+        frame_expected[6 + i] = (expected >> (8 * (3 - i))) & 0xFF;
+    uint8_t *res = encoder(trame, 0x01, 0x01, 0x00, NULL, 0x03);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// ENCODER AND DECODER
+////////////////////////////////////////////////////////////////////////////////////////////////////
+Test(goodInput, encodeDecode) {
+    uint8_t trame[13];
+    uint8_t frame_expected[] = {0x69, 0x01, 0x00, 0x01, 0x00, 0x03, 0x0A, 0x0B, 0x0C, 0x00, 0x00, 0x00, 0x00};
+    uint32_t expected = compute_checksum(frame_expected, sizeof(frame_expected) - 4);
+    for (int i = 0; i < 4; i++)
+        frame_expected[sizeof(frame_expected) - 4 + i] = (expected >> (8 * (3 - i))) & 0xFF;
+
+    uint8_t payload[] = {0x0A, 0x0B, 0x0C};
+    uint8_t *res = encoder(trame, 0x01, 0x01, 0x03, payload, 0x03);
     printf("RES :\n");
-    for (unsigned long i = 0; i < 11; i++) {
+
+    for (unsigned long i = 0; i < 13; i++) {
         printf("%hhu, ", res[i]);
     }
+
     printf("\n");
     printf("expected :\n");
-    for (unsigned long i = 0; i < 11; i++) {
+
+    for (unsigned long i = 0; i < 13; i++) {
         printf("%hhu, ", frame_expected[i]);
     }
+
     printf("\n");
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < 13; i++) {
         cr_assert_eq(res[i], frame_expected[i]);
     }
 }
