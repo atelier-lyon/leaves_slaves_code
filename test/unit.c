@@ -100,8 +100,7 @@ Test(badInput, decodeRgbWrongPayload){
 
     // adding the error
     data[7] = 0x08;
-    for (
-    int i = 0;i < 13; i++)
+    for (int i = 0;i < 13; i++)
         decoder(data[i]);
 
     // TEST:
@@ -153,21 +152,14 @@ Test(goodInput, encodeDecode) {
 
     uint8_t payload[] = {0x0A, 0x0B, 0x0C};
     uint8_t *res = encoder(trame, 0x01, 0x01, 0x03, payload, 0x03);
-    printf("RES :\n");
+    for (int i = 0;i < 13; i++)
+        decoder(res[i]);
 
-    for (unsigned long i = 0; i < 13; i++) {
-        printf("%hhu, ", res[i]);
-    }
+    cr_assert_eq(frame.function_name, SETCOLORRGB);
+    cr_assert_eq(frame.id, 1);
+    cr_assert_eq(frame.size, 3);
+    cr_assert_eq(frame.payload[0], 10);
+    cr_assert_eq(frame.payload[1], 11);
+    cr_assert_eq(frame.payload[2], 12);
 
-    printf("\n");
-    printf("expected :\n");
-
-    for (unsigned long i = 0; i < 13; i++) {
-        printf("%hhu, ", frame_expected[i]);
-    }
-
-    printf("\n");
-    for (int i = 0; i < 13; i++) {
-        cr_assert_eq(res[i], frame_expected[i]);
-    }
 }
