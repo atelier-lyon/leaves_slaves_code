@@ -1,12 +1,11 @@
 #include "process.h"
-#include <stdint.h>
 
 void SetColorRGB(uint8_t r, uint8_t g, uint8_t b){
-    printf("SetColorRGB\n");
+    printf("SetColorRGB: R=%d G=%d B=%d\n", r, g, b);
 }
 
 void SetColorHSV(uint8_t h, uint8_t s, uint8_t v){
-    printf("SetColorHSV\n");
+    printf("SetColorHSV: H=%d S=%d V=%d\n", h, s, v);
 }
 
 void GetColorRGB(void){

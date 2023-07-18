@@ -8,29 +8,6 @@
 #define MAX_PAYLOAD_SIZE 4096
 #define SOF 0x69
 
-// ######################################################
-
-typedef union {
-    uint32_t raw;
-    struct {
-        uint8_t id;
-        uint8_t payload[3];
-    } content;
-} function;
-
-struct protoframe_v2 {
-    function SetColorRGB;
-    function SetColorHSV;
-    // TODO: ...
-    uint8_t FocusOn;
-    // TODO: ...
-    uint8_t discovery[];
-} __attribute__((__packed__)); // evite le padding
-
-
-// ######################################################
-
-
 typedef enum {
     SETCOLORRGB = 0x01,
     SETCOLORHSV = 0x02,

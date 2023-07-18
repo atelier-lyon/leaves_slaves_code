@@ -1,6 +1,7 @@
 #include "proto.h"
 #include "process.h"
 #include <stdint.h>
+#include <stdio.h>
 
 struct protoframe frame = {
     .function_name = 0,
@@ -62,43 +63,40 @@ void decoder(uint8_t bufferbyte){
             frame.size = (frame.size << 8) | bufferbyte;
             // if the size is bigger than the maximum payload size
             // then we make it fail by going directly to the checksum state
-            if(frame.size > MAX_PAYLOAD_SIZE){
-                state = S_CHECKSUM;
-                break;
-            }else if (frame.size == 0) {
+            if(frame.size > MAX_PAYLOAD_SIZE || frame.size == 0){
                 state = S_CHECKSUM;
                 break;
             }
             state = S_PAYLOAD;
             break;
         case S_PAYLOAD:
-            if(frame.size > MAX_PAYLOAD_SIZE){
+            frame.payload[payload_counter] = bufferbyte;
+            if(payload_counter == frame.size - 1){ // range 0..size-1 = size iterations
                 state = S_CHECKSUM;
                 break;
-            } else if(payload_counter == frame.size){
-                state = S_CHECKSUM;
             }
-            frame.payload[payload_counter] = bufferbyte;
             payload_counter++; 
             break;
 
         case S_CHECKSUM:
             frame.checksum = (checksum << 8) | bufferbyte;
-            checksum_counter++;
             // if the checksum is incorrect, the process function will not be called
             // but the values will still be there for test purposes
-            if(checksum_counter == 4){
-                uint32_t computed = compute_checksum((uint8_t*)&frame, sizeof(frame) - 4) + 0x69; // adding the SOF
-                if(frame.checksum == computed) process_decoded_data(frame, frame.payload);
-                else {
+            if(checksum_counter == 3){ // 0..3 = 4 iterations
+                uint32_t computed = compute_checksum((uint8_t*)&frame, sizeof(frame) - 4) + 0x69;
+                // if the checksum is correct, then the process function is called
+                if(frame.checksum == computed) {
+                    process_decoded_data(frame, frame.payload);
+                }else {
                     // for test purposes to see if the checksum is correctly tested
-                    frame.function_name = 0x42;
+                    frame.function_name = ERRORSYNTAX;
                 }// resetting every parameter to be able to read another frame
                 state = S_WAITING_SOF;
                 payload_counter = 0;
                 checksum_counter = 0;
                 break;
             }            
+            checksum_counter++;
             break;
     }
 }
@@ -116,17 +114,18 @@ void decoder(uint8_t bufferbyte){
 /* } */
 
 /* int main(){ */
-    /* uint8_t data[10] = {0x69, 0x06, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; */
-    /* // just setting the checksum correctly */
-    /* uint32_t checkss = compute_checksum(data, 5); */
+    /* // RGBreq frame */
+    /* //                  SOF   FN    ID    ID    LEN   LEN   PAYLOAD           Checksum */
+    /* uint8_t data[13] = {0x69, 0x01, 0x00, 0x01, 0x00, 0x03, 0x0A, 0x0B, 0x0C, 0x00, 0x00, 0x00, 0x00}; */
+    /* // setup checksum */
+    /* int length = sizeof(data) - 4; */
+    /* uint32_t checkss = compute_checksum(data, length); // not length -1 cuz strict inferior */
     /* for (int i = 0; i < 4; i++) */
-    /* { */
-        /* data[6 + i] = (checkss >> (8 * (3 - i))) & 0xFF; */
-    /* } */
-    /* printf("Checksum: %d\n", *(data + 5)); */
-    /* for (int i = 0; i < 10; i++) */
-    /* { */
+        /* data[length + i] = (checkss >> (8 * (3 - i))) & 0xFF; */
+
+    /* for (int i = 0; i < 13; i++) */
         /* decoder(data[i]); */
-    /* } */
-    /* print_protoframe(frame); */
+
+    /* // TEST: */
+    /* // print_protoframe(frame); */
 /* } */
