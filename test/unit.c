@@ -136,5 +136,7 @@ Test(goodInput, basicTrame)
         printf("%hhu, ", frame_expected[i]);
     }
     printf("\n");
-    cr_assert_eq(res, frame_expected);
+    for (int i = 0; i < 11; i++) {
+        cr_assert_eq(res[i], frame_expected[i]);
+    }
 }
